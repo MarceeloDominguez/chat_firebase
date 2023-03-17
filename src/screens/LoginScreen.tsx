@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,12 +7,17 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "@expo/vector-icons/Ionicons";
 import { RootStackParamsList } from "../navigation/Navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useForm } from "../hooks/useForm";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase/firebase.config";
+import Loading from "../components/Loading";
 
 const { width, height } = Dimensions.get("window");
 
@@ -26,16 +31,42 @@ type Props = {
 };
 
 export default function LoginScreen({ navigation }: Props) {
+  const [eye, setEye] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { email, password, handleChange } = useForm({
     email: "",
     password: "",
   });
+
+  const handleSignIn = async () => {
+    setLoading(true);
+    try {
+      if (email !== "" && password !== "") {
+        await signInWithEmailAndPassword(auth, email, password);
+        setLoading(false);
+        navigation.navigate("ProfileScreen");
+      } else {
+        Alert.alert("Error", "Email and password are required", [
+          { text: "Ok" },
+        ]);
+        setLoading(false);
+      }
+    } catch (error) {
+      Alert.alert("Error", "The email or password are incorrect", [
+        { text: "Ok" },
+      ]);
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <Loading />;
 
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
+      <StatusBar backgroundColor="#25D366" barStyle="dark-content" />
       <LinearGradient
         start={{ x: 1, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -49,20 +80,35 @@ export default function LoginScreen({ navigation }: Props) {
             placeholder="email@gmail.com"
             style={styles.input}
             placeholderTextColor="#7E7474"
+            keyboardType="email-address"
             value={email}
             onChangeText={(value) => handleChange(value, "email")}
           />
-          <TextInput
-            placeholder="*******"
-            style={styles.input}
-            placeholderTextColor="#7E7474"
-            value={password}
-            onChangeText={(value) => handleChange(value, "password")}
-          />
+          <View>
+            <TextInput
+              placeholder="*******"
+              style={styles.input}
+              placeholderTextColor="#7E7474"
+              secureTextEntry={eye}
+              value={password}
+              onChangeText={(value) => handleChange(value, "password")}
+              onSubmitEditing={handleSignIn}
+            />
+            <Icon
+              name={eye ? "eye-off-outline" : "eye-outline"}
+              size={18}
+              style={styles.eyeIcon}
+              onPress={() => setEye(!eye)}
+            />
+          </View>
           <TouchableOpacity activeOpacity={0.9} style={styles.wrapForgetPass}>
             <Text style={styles.pass}>Forget password?</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.containerButton} activeOpacity={0.9}>
+          <TouchableOpacity
+            style={styles.containerButton}
+            activeOpacity={0.9}
+            onPress={() => handleSignIn()}
+          >
             <Text style={styles.textButton}>Sign In</Text>
           </TouchableOpacity>
           <View style={styles.containerLine}>
@@ -104,7 +150,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   title: {
-    marginTop: height * 0.1,
+    marginTop: 40,
     fontSize: 26,
     fontWeight: "bold",
     letterSpacing: 0.4,
@@ -126,6 +172,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     fontSize: 13,
     fontWeight: "bold",
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: 20,
+    bottom: 25,
+    color: "#7E7474",
   },
   wrapForgetPass: {
     alignItems: "flex-end",
