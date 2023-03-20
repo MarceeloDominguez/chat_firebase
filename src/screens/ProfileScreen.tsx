@@ -8,7 +8,7 @@ import {
   Image,
   TouchableOpacity,
   StatusBar,
-  KeyboardAvoidingView,
+  Dimensions,
 } from "react-native";
 import { auth } from "../firebase/firebase.config";
 import { getAuth, updateProfile } from "firebase/auth";
@@ -18,7 +18,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamsList } from "../navigation/Navigation";
 import * as ImagePicker from "expo-image-picker";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import Icon from "@expo/vector-icons/Ionicons";
 import Loading from "../components/Loading";
+
+const { height } = Dimensions.get("window");
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamsList,
@@ -94,65 +97,58 @@ export default function ProfileScreen({ navigation }: Props) {
   if (loading) return <Loading />;
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      keyboardVerticalOffset={-141}
-      behavior="padding"
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
     >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
-        <StatusBar backgroundColor="#FAF7F0" barStyle="dark-content" />
-        <View style={styles.wrapContent}>
-          <View>
-            <Text style={styles.title}>complete profile</Text>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.containerAvatar}
-              onPress={takePhotoFromGallery}
-            >
-              {avatar !== null ? (
-                <Image source={{ uri: avatar }} style={styles.avatar} />
-              ) : (
-                <Image
-                  source={require("../../assets/avatar.png")}
-                  style={styles.avatar}
-                />
-              )}
-            </TouchableOpacity>
-            <Text style={styles.nameUser}>
-              {" "}
-              {userLogged?.displayName !== null
-                ? userLogged?.displayName
-                : "name"}
-            </Text>
-            <TextInput
-              placeholder="New name"
-              style={styles.input}
-              value={name}
-              onChangeText={(value) => handleChange(value, "name")}
-              onSubmitEditing={handleUpdatedName}
-            />
-            <TouchableOpacity
-              style={styles.containerButtonUpdatedName}
-              activeOpacity={0.8}
-              onPress={() => handleUpdatedName()}
-            >
-              <Text style={styles.textButtonUpdatedName}>Update name</Text>
-            </TouchableOpacity>
-          </View>
-
+      <StatusBar backgroundColor="#FAF7F0" barStyle="dark-content" />
+      <View style={styles.wrapContent}>
+        <View>
+          <Text style={styles.title}>Update profile</Text>
           <TouchableOpacity
-            style={styles.containerNext}
             activeOpacity={0.8}
-            onPress={() => navigation.navigate("HomeScreen")}
+            style={styles.containerAvatar}
+            onPress={takePhotoFromGallery}
           >
-            <Text style={styles.next}>skip step</Text>
+            {avatar !== null ? (
+              <Image source={{ uri: avatar }} style={styles.avatar} />
+            ) : (
+              <Image
+                source={require("../../assets/avatar.png")}
+                style={styles.avatar}
+              />
+            )}
+            <View style={styles.iconAvatar}>
+              <Icon name="image-outline" size={22} color="#FAF7F0" />
+            </View>
+          </TouchableOpacity>
+          <Text style={styles.nameUser}>{userLogged?.displayName}</Text>
+          <Text style={styles.label}>new name</Text>
+          <TextInput
+            placeholder="John Doe"
+            style={styles.input}
+            value={name}
+            onChangeText={(value) => handleChange(value, "name")}
+            onSubmitEditing={handleUpdatedName}
+          />
+          <TouchableOpacity
+            style={styles.containerButtonUpdatedName}
+            activeOpacity={0.8}
+            onPress={() => handleUpdatedName()}
+          >
+            <Text style={styles.textButtonUpdatedName}>Update name</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+
+        <TouchableOpacity
+          style={styles.containerNext}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate("ChatScreen")}
+        >
+          <Text style={styles.next}>go to chat</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -163,7 +159,6 @@ const styles = StyleSheet.create({
   },
   wrapContent: {
     flex: 1,
-    justifyContent: "space-between",
   },
   title: {
     fontSize: 20,
@@ -191,12 +186,32 @@ const styles = StyleSheet.create({
     height: 138,
     borderRadius: 138 / 2,
   },
+  iconAvatar: {
+    position: "absolute",
+    height: 30,
+    width: 30,
+    backgroundColor: "#25D366",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+    bottom: 7,
+    right: 7,
+  },
   nameUser: {
     textAlign: "center",
     fontSize: 15,
     letterSpacing: 0.4,
     fontWeight: "bold",
     textTransform: "capitalize",
+  },
+  label: {
+    marginHorizontal: 22,
+    marginTop: 25,
+    fontSize: 12,
+    fontWeight: "bold",
+    letterSpacing: 0.4,
+    textTransform: "capitalize",
+    color: "#202020",
   },
   input: {
     backgroundColor: "#EEEEEE",
@@ -205,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     fontSize: 13,
     fontWeight: "bold",
-    marginTop: 30,
+    marginTop: 5,
   },
   containerButtonUpdatedName: {
     backgroundColor: "#25D366",
@@ -232,6 +247,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 20,
     borderRadius: 10,
+    marginTop: height <= 592 ? height * 0.12 : height * 0.35,
   },
   next: {
     fontSize: 13,

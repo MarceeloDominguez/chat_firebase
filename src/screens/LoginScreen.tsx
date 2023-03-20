@@ -44,7 +44,7 @@ export default function LoginScreen({ navigation }: Props) {
       if (email !== "" && password !== "") {
         await signInWithEmailAndPassword(auth, email, password);
         setLoading(false);
-        navigation.navigate("ProfileScreen");
+        navigation.navigate("ChatScreen");
       } else {
         Alert.alert("Error", "Email and password are required", [
           { text: "Ok" },
@@ -76,6 +76,7 @@ export default function LoginScreen({ navigation }: Props) {
       <View style={{ marginHorizontal: 20 }}>
         <Text style={styles.title}>Sign In</Text>
         <View style={styles.wrapInputs}>
+          <Text style={styles.label}>Email</Text>
           <TextInput
             placeholder="email@gmail.com"
             style={styles.input}
@@ -84,6 +85,7 @@ export default function LoginScreen({ navigation }: Props) {
             value={email}
             onChangeText={(value) => handleChange(value, "email")}
           />
+          <Text style={styles.label}>Password</Text>
           <View>
             <TextInput
               placeholder="*******"
@@ -141,7 +143,7 @@ export default function LoginScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#FAF7F0",
   },
   containerGradient: {
     width: width,
@@ -158,7 +160,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   wrapInputs: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FAF7F0",
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
     paddingTop: 10,
@@ -167,11 +169,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEEEEE",
     marginHorizontal: 10,
     marginBottom: 10,
-    marginTop: 10,
+    marginTop: 5,
     padding: 10,
     borderRadius: 10,
     fontSize: 13,
     fontWeight: "bold",
+  },
+  label: {
+    marginHorizontal: 12,
+    marginTop: 5,
+    fontSize: 12,
+    fontWeight: "bold",
+    letterSpacing: 0.4,
+    textTransform: "capitalize",
+    color: "#202020",
   },
   eyeIcon: {
     position: "absolute",
