@@ -42,3 +42,5 @@ Start the server
 
 ## 🛠 Skills
 **Client:** React Native expo
+
+**Server:** Firebase
