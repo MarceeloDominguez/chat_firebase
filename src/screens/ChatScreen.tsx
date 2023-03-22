@@ -11,6 +11,7 @@ import {
   Image,
   TouchableOpacity,
   Text,
+  StatusBar,
 } from "react-native";
 import {
   collection,
@@ -143,8 +144,9 @@ export default function ChatScreen({ navigation }: Props) {
 
   return (
     <View style={{ flexGrow: 1 }}>
+      <StatusBar backgroundColor="#FAF7F0" barStyle="dark-content" />
       <ImageBackground
-        style={{ flex: 1, width: null!, height: null!, paddingBottom: 20 }}
+        style={styles.imageBackground}
         source={require("../../assets/fondo-chat.jpg")}
       >
         <GiftedChat
@@ -218,6 +220,12 @@ const MessengerBarContainer = (props: any) => {
 };
 
 const styles = StyleSheet.create({
+  imageBackground: {
+    flex: 1,
+    width: null!,
+    height: null!,
+    paddingBottom: 20,
+  },
   containerAvatar: {
     width: 38,
     height: 38,
