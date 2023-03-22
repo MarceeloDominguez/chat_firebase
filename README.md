@@ -1,4 +1,4 @@
-# chat_firebase
+# Chat App
 
 <table>
 <tr>
